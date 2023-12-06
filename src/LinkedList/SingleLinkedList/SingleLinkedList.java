@@ -2,7 +2,8 @@ package LinkedList.SingleLinkedList;
 
 public class SingleLinkedList {
     //哨兵节点,存储-1,可以为任意初始值,并不会使用到
-    private Node sentinel = new Node(-1, null);
+    private final Node sentinel = new Node(-1, null);
+    //length of the LinkedList
     private int size = 0;
 
     /**
@@ -51,15 +52,18 @@ public class SingleLinkedList {
 
     /**
      * 尾部添加多个元素
-     * @param first
-     * @param rest
+     *
+     * @param first 要添加到链表尾部的第一个整数
+     * @param rest  要添加到链表尾部的其他整数（可选）
      */
     public void addLast(int first, int... rest) {
         Node sublist = new Node(first, null);
+        size++;
         Node curr = sublist;
         for (int value : rest) {
             curr.next = new Node(value, null);
             curr = curr.next;
+            size++;
         }
 
         Node last = findLast();
@@ -68,14 +72,20 @@ public class SingleLinkedList {
 
 
     /**
-     * @param index 插入的索引位置(from 0 to size)
+     * @param index 插入的索引位置(from 0 to size + 1)
      * @param x     插入的数据
      */
     public void insert(int index, int x) {
-        if (index < 0 || index > size) {
+        if (index < 0 || index > size + 1) {
             throw new RuntimeException("index out of bounds");
         }
-
+        if (index == 0) {
+            sentinel.next = new Node(x, sentinel.next);
+            return;
+        }
+        Node prev = find(index - 1);
+        prev.next = new Node(x, prev.next);
+        size++;
     }
 
     /**
@@ -94,6 +104,9 @@ public class SingleLinkedList {
         }
     }
 
+    /**
+     * 删除头节点
+     */
     public void removeFirst() {
         if (size == 0) {
             return;
@@ -106,6 +119,9 @@ public class SingleLinkedList {
         }
     }
 
+    /**
+     * 打印链表,没有元素则打印null
+     */
     public void display() {
         Node curr = sentinel;
         StringBuilder sb = new StringBuilder();

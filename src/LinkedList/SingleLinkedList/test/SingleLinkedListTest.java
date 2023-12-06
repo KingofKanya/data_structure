@@ -1,10 +1,6 @@
 package LinkedList.SingleLinkedList.test;
 
-import LinkedList.SingleLinkedList.Node;
 import LinkedList.SingleLinkedList.SingleLinkedList;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class SingleLinkedListTest {
     public static void main(String[] args) {
@@ -29,14 +25,17 @@ public class SingleLinkedListTest {
         s1.display();
         s1.addLast(1);
         s1.display();
-        s1.addLast(3, 4, 5);
+        s1.addLast(3, 4, 6);
         s1.display();
 
         System.out.println("\ntest insert");
-    }
-
-    @Test
-    public static void test() {
-
+        s1.insert(1, 2);
+        s1.display();
+        s1.insert(0, 0);
+        s1.display();
+        s1.insert(5, 5);
+        s1.display();
+        s1.insert(7, -1);
+        s1.display();
     }
 }
