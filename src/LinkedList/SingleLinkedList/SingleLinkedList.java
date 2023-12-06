@@ -110,13 +110,13 @@ public class SingleLinkedList {
     public void removeFirst() {
         if (size == 0) {
             return;
-        } else if (size == 1) {
+        }
+        if (size == 1) {
             sentinel.next = null;
-            size--;
         } else {
             sentinel.next = sentinel.next.next;
-            size--;
         }
+        size--;
     }
 
     /**
