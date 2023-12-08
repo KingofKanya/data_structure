@@ -1,53 +1,16 @@
 package LinkedList.SingleLinkedList;
 
-public class SingleLinkedList {
-    //哨兵节点,存储-1,可以为任意初始值,并不会使用到
-    private final Node sentinel = new Node(-1, null);
+import LinkedList.LinkedList;
+
+public class SingleLinkedList<E> implements LinkedList<E> {
+    //哨兵节点
+    private Node<E> sentinel;
     //length of the LinkedList
-    private int size = 0;
+    private int size;
 
-    /**
-     * @return 返回尾节点
-     */
-    private Node findLast() {
-        Node curr = sentinel;
-        while (curr.next != null) {
-            curr = curr.next;
-        }
-        return curr;
-    }
-
-
-    /**
-     * @param index 查找的索引位置(from 0 to size)
-     * @return 返回索引index上的节点
-     */
-    private Node find(int index) {
-        if (index < 0 || index > size) {
-            throw new RuntimeException("index out of bounds");
-        }
-        Node curr = sentinel.next;
-        for (int i = 0; i < index; i++) {
-            curr = curr.next;
-        }
-        return curr;
-    }
-
-    /**
-     * @param x 插入元素
-     */
-    public void addFirst(int x) {
-        sentinel.next = new Node(x, sentinel.next);
-        size++;
-    }
-
-
-    /**
-     * @param x 插入的元素
-     */
-    public void addLast(int x) {
-        findLast().next = new Node(x, null);
-        size++;
+    public SingleLinkedList() {
+        this.sentinel = new Node<>(null, null);
+        this.size = 0;
     }
 
     /**
@@ -56,35 +19,34 @@ public class SingleLinkedList {
      * @param first 要添加到链表尾部的第一个整数
      * @param rest  要添加到链表尾部的其他整数（可选）
      */
-    public void addLast(int first, int... rest) {
-        Node sublist = new Node(first, null);
+    @SafeVarargs
+    public final void addLast(E first, E... rest) {
+        Node<E> sublist = new Node<>(first, null);
         size++;
-        Node curr = sublist;
-        for (int value : rest) {
-            curr.next = new Node(value, null);
+        Node<E> curr = sublist;
+        for (E value : rest) {
+            curr.next = new Node<>(value, null);
             curr = curr.next;
             size++;
         }
 
-        Node last = findLast();
+        Node<E> last = findLast();
         last.next = sublist;
     }
 
 
-    /**
-     * @param index 插入的索引位置(from 0 to size + 1)
-     * @param x     插入的数据
-     */
-    public void insert(int index, int x) {
-        if (index < 0 || index > size + 1) {
-            throw new RuntimeException("index out of bounds");
-        }
-        if (index == 0) {
-            sentinel.next = new Node(x, sentinel.next);
+    @Override
+    public void insert(int index, E x) {
+        if (index < 0 || index > size) {
             return;
         }
-        Node prev = find(index - 1);
-        prev.next = new Node(x, prev.next);
+        if (index == 0) {
+            sentinel.next = new Node<>(x, sentinel.next);
+            size++;
+            return;
+        }
+        Node<E> prev = find(index - 1);
+        prev.next = new Node<>(x, prev.next);
         size++;
     }
 
@@ -92,38 +54,50 @@ public class SingleLinkedList {
      * 删除元素
      *
      * @param index 删除的索引位置(from 0 to size - 1)
+     * @return 返回被删除节点存储的数据
      */
-    public void remove(int index) {
+    @Override
+    public E remove(int index) {
+        E ret = null;
         if (index == 0) {
-            removeFirst();
-        } else {
-            Node prev = find(index - 1);
-            Node curr = prev.next;
+            if (size == 0) {
+                return null;
+            }
+            ret = sentinel.next.value;
+            if (size == 1) {
+                sentinel.next = null;
+            } else {
+                sentinel.next = sentinel.next.next;
+            }
+            size--;
+        } else if (index < size && index > 0) {
+            Node<E> prev = find(index - 1);
+            Node<E> curr = prev.next;
             prev.next = curr.next;
             size--;
+            return curr.value;
         }
+        return ret;
     }
 
-    /**
-     * 删除头节点
-     */
-    public void removeFirst() {
-        if (size == 0) {
-            return;
-        }
-        if (size == 1) {
-            sentinel.next = null;
-        } else {
-            sentinel.next = sentinel.next.next;
-        }
-        size--;
+    @Override
+    public E get(int index) {
+        Node<E> found = find(index);
+        return found == null ? null : found.value;
     }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
 
     /**
      * 打印链表,没有元素则打印null
      */
+    @Override
     public void display() {
-        Node curr = sentinel;
+        Node<E> curr = sentinel;
         StringBuilder sb = new StringBuilder();
         while (curr.next != null) {
             curr = curr.next;
@@ -131,5 +105,38 @@ public class SingleLinkedList {
         }
         sb.append("null");
         System.out.println(sb);
+    }
+
+    @Override
+    public void clear() {
+        this.sentinel = new Node<>(null, null);
+        this.size = 0;
+    }
+
+    /**
+     * @param index 查找的索引位置(from 0 to size - 1)
+     * @return 返回索引index上的节点,不存在返回null
+     */
+    private Node<E> find(int index) {
+        if (index < 0 || index >= size) {
+            return null;
+        }
+        Node<E> curr = sentinel.next;
+        for (int i = 0; i < index; i++) {
+            curr = curr.next;
+        }
+        return curr;
+    }
+
+
+    /**
+     * @return 返回尾节点
+     */
+    private Node<E> findLast() {
+        Node<E> curr = sentinel;
+        while (curr.next != null) {
+            curr = curr.next;
+        }
+        return curr;
     }
 }

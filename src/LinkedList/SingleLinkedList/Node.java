@@ -1,13 +1,13 @@
 package LinkedList.SingleLinkedList;
 
 //节点类
-public class Node {
+public class Node <E>{
     //此节点存放的数据
-    public int value;
+    E value;
     //此节点的下一个节点,若无则为null
-    public Node next;
+    Node<E> next;
 
-    public Node(int value, Node next) {
+    public Node(E value, Node next) {
         this.value = value;
         this.next = next;
     }
