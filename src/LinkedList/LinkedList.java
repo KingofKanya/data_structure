@@ -1,6 +1,6 @@
 package LinkedList;
 
-public interface LinkedList<E> {
+public interface LinkedList<E> extends Iterable<E>{
     default void addLast(E element) {
         insert(size(), element);
     }
@@ -31,6 +31,16 @@ public interface LinkedList<E> {
     }
 
     /**
+     * 向尾部添加多个元素
+     * @param elements 要添加的元素
+     */
+    default void add(E... elements){
+        for (E element : elements) {
+            addLast(element);
+        }
+    }
+
+    /**
      * 若index out of bounds,则不做任何处理,直接返回
      *
      * @param index   插入的索引位置(from 0 to size())
@@ -38,6 +48,12 @@ public interface LinkedList<E> {
      */
     void insert(int index, E element);
 
+    /**
+     * 删除元素
+     *
+     * @param index 删除的索引位置(from 0 to size - 1)
+     * @return 返回被删除节点存储的数据
+     */
     E remove(int index);
 
     /**
@@ -50,6 +66,9 @@ public interface LinkedList<E> {
     // 获取链表的大小
     int size();
 
+    /**
+     * 打印链表
+     */
     void display();
 
     /**

@@ -2,14 +2,16 @@ package LinkedList.DoubleLinkedList;
 
 import LinkedList.LinkedList;
 
+import java.util.Iterator;
+
 public class DoubleLinkedList<E> implements LinkedList<E> {
-    private final Node head;
-    private final Node tail;
+    private Node<E> head;
+    private Node<E> tail;
     int size;
 
     public DoubleLinkedList() {
-        this.head = new Node(null, -1, null);
-        this.tail = new Node(null, -1, null);
+        this.head = new Node<>(null, null, null);
+        this.tail = new Node<>(null, null, null);
         head.next = tail;
         tail.prev = head;
         this.size = 0;
@@ -17,45 +19,64 @@ public class DoubleLinkedList<E> implements LinkedList<E> {
 
     /**
      * @param index 待查找节点索引
-     * @return 返回指定索引节点, index=-1返回head, =size+1 返回null
+     * @return 返回指定索引节点, 不存在则返回null
      */
-    private Node find(int index) {
+    private Node<E> find(int index) {
         int i = -1;
-        for (Node p = head; p != tail; p = p.next, i++) {
+        for (Node<E> p = head; p != tail; p = p.next, i++) {
             if (i == index) return p;
         }
         return null;
     }
 
 
-    public void insert(int index, int value){
-        Node prev = find(index - 1);
-        if (prev == null);
-        Node next = prev.next;
-        Node inserted = new Node(prev, value, next);
-        prev.next = inserted;
-        next.prev = inserted;
-    }
-
     @Override
     public void insert(int index, E element) {
-
+        if (index < 0 || index > size) {
+            return;
+        }
+        if (index == 0) {
+            head.next = new Node<>(head, element, head.next);
+            size++;
+            return;
+        }
+        Node<E> prev = find(index - 1);
+        prev.next = new Node<>(prev, element, prev.next);
+        size++;
     }
 
-    /**
-     * @param index
-     */
+
+    @Override
     public E remove(int index) {
-        Node removed = find(index);
-        if (removed == null || removed == head) return null;
-        removed.prev.next = removed.next;
-        removed.next.prev = removed.prev;
-        return null;
+        E ret = null;
+        if (index == 0) {
+            if (size == 0) {
+                return null;
+            }
+            ret = head.next.value;
+            if (size == 1) {
+                head.next = null;
+                tail.prev = null;
+            } else {
+                head.next = head.next.next;
+                head.next.next.prev = head;
+            }
+            size--;
+        } else if (index < size && index > 0) {
+            Node<E> prev = find(index - 1);
+            Node<E> curr = prev.next;
+            prev.next = curr.next;
+            curr.next.prev = prev;
+            size--;
+            return curr.value;
+        }
+        return ret;
     }
 
     @Override
     public E get(int index) {
-        return null;
+        Node<E> found = find(index);
+        return found == null ? null : found.value;
     }
 
     @Override
@@ -65,7 +86,7 @@ public class DoubleLinkedList<E> implements LinkedList<E> {
 
     @Override
     public void display() {
-        Node curr = head;
+        Node<E> curr = head;
         StringBuilder sb = new StringBuilder();
         sb.append("null<-->");
         while (curr.next != tail) {
@@ -78,6 +99,29 @@ public class DoubleLinkedList<E> implements LinkedList<E> {
 
     @Override
     public void clear() {
+        this.head = new Node<E>(null, null, null);
+        this.tail = new Node<E>(null, null, null);
+        head.next = tail;
+        tail.prev = head;
+        this.size = 0;
+    }
 
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<>() {
+            private Node<E> current = head.next;
+
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+
+            @Override
+            public E next() {
+                E value = current.value;
+                current = current.next;
+                return value;
+            }
+        };
     }
 }

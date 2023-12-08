@@ -2,6 +2,9 @@ package LinkedList.SingleLinkedList;
 
 import LinkedList.LinkedList;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 public class SingleLinkedList<E> implements LinkedList<E> {
     //哨兵节点
     private Node<E> sentinel;
@@ -11,27 +14,6 @@ public class SingleLinkedList<E> implements LinkedList<E> {
     public SingleLinkedList() {
         this.sentinel = new Node<>(null, null);
         this.size = 0;
-    }
-
-    /**
-     * 尾部添加多个元素
-     *
-     * @param first 要添加到链表尾部的第一个整数
-     * @param rest  要添加到链表尾部的其他整数（可选）
-     */
-    @SafeVarargs
-    public final void addLast(E first, E... rest) {
-        Node<E> sublist = new Node<>(first, null);
-        size++;
-        Node<E> curr = sublist;
-        for (E value : rest) {
-            curr.next = new Node<>(value, null);
-            curr = curr.next;
-            size++;
-        }
-
-        Node<E> last = findLast();
-        last.next = sublist;
     }
 
 
@@ -50,12 +32,7 @@ public class SingleLinkedList<E> implements LinkedList<E> {
         size++;
     }
 
-    /**
-     * 删除元素
-     *
-     * @param index 删除的索引位置(from 0 to size - 1)
-     * @return 返回被删除节点存储的数据
-     */
+
     @Override
     public E remove(int index) {
         E ret = null;
@@ -92,9 +69,6 @@ public class SingleLinkedList<E> implements LinkedList<E> {
     }
 
 
-    /**
-     * 打印链表,没有元素则打印null
-     */
     @Override
     public void display() {
         Node<E> curr = sentinel;
@@ -128,15 +102,24 @@ public class SingleLinkedList<E> implements LinkedList<E> {
         return curr;
     }
 
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<>() {
+            private Node<E> current = sentinel.next;
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
 
-    /**
-     * @return 返回尾节点
-     */
-    private Node<E> findLast() {
-        Node<E> curr = sentinel;
-        while (curr.next != null) {
-            curr = curr.next;
-        }
-        return curr;
+            @Override
+            public E next() {
+                if(!hasNext()){
+                    throw new NoSuchElementException();
+                }
+                E value = current.value;
+                current = current.next;
+                return value;
+            }
+        };
     }
 }
